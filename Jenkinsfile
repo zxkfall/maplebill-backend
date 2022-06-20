@@ -1,6 +1,6 @@
 node{
     stage('Checkout'){
-        sh 'echo "Hello World"'
+        sh 'echo "This is updated"'
     }
     stage('Build'){
         sh 'echo "Building"'
