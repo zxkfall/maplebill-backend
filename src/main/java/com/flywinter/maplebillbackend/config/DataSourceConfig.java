@@ -22,45 +22,51 @@ import java.sql.Statement;
 public class DataSourceConfig {
 
     @Value("${spring.datasource.url}")
-    //jdbc:mysql://127.0.0.1:3306/insight?useUnicode=true&characterEncoding=utf8&failOverReadOnly=false&allowMultiQueries=true
     private String datasourceUrl;
-    @Value("${spring.datasource.driver-class-name}")
+    @Value("${spring.datasource.driverClassName}")
     private String driverClassName;
     @Value("${spring.datasource.username}")
     private String username;
     @Value("${spring.datasource.password}")
     private String password;
 
-    @Bean     //声明其为Bean实例
-    public DataSource dataSource(){
-        HikariDataSource datasource = new HikariDataSource();
+    @Bean
+    public DataSource dataSource() {
+        createDatabase();
+        return getHikariDataSource();
+    }
 
+    private void createDatabase() {
+        String databaseUrl = datasourceUrl.substring(0, datasourceUrl.indexOf("?"));
+        String baseUrl = databaseUrl.substring(0, databaseUrl.lastIndexOf("/"));
+        String datasourceName = databaseUrl.substring(databaseUrl.lastIndexOf("/") + 1);
+
+        loadDriver();
+
+        try (
+                Connection connection = DriverManager.getConnection(baseUrl, username, password);
+                Statement statement = connection.createStatement();
+        ) {
+            statement.executeUpdate("CREATE DATABASE IF NOT EXISTS `%s` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci".formatted(datasourceName));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private HikariDataSource getHikariDataSource() {
+        HikariDataSource datasource = new HikariDataSource();
         datasource.setJdbcUrl(datasourceUrl);
         datasource.setUsername(username);
         datasource.setPassword(password);
         datasource.setDriverClassName(driverClassName);
+        return datasource;
+    }
 
+    private void loadDriver() {
         try {
             Class.forName(driverClassName);
-
-            String url01 = datasourceUrl.substring(0,datasourceUrl.indexOf("?"));
-
-            String url02 = url01.substring(0,url01.lastIndexOf("/"));
-
-            String datasourceName = url01.substring(url01.lastIndexOf("/")+1);
-            // 连接已经存在的数据库，如：mysql
-            Connection connection = DriverManager.getConnection(url02, username, password);
-            Statement statement = connection.createStatement();
-
-            // 创建数据库
-            statement.executeUpdate("CREATE DATABASE IF NOT EXISTS `" + datasourceName + "` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci");
-
-            statement.close();
-            connection.close();
-        } catch (Exception e) {
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-
-        return datasource;
     }
 }
