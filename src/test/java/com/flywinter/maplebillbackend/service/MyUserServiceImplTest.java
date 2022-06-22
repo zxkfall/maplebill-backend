@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 /**
@@ -20,7 +21,7 @@ import static org.mockito.Mockito.when;
  * Description:
  */
 @ExtendWith(MockitoExtension.class) //引入Mockito
-class MyUserServiceTest {
+class MyUserServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
@@ -41,5 +42,26 @@ class MyUserServiceTest {
         final var result = myUserServiceImpl.getPasswordByEmail(userInfo.getEmail());
         //then
         assertEquals(userInfo, result);
+    }
+
+    @Test
+    void should_create_user() {
+        //given
+        final var bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        final var userInfo = new UserInfo();
+        userInfo.setEmail("zxkfall@foxmail.com");
+        userInfo.setPassword(bCryptPasswordEncoder.encode("123456"));
+        userInfo.setNickname("zxk");
+        userInfo.setRoles("ROLE_NORMAL");
+        when(userRepository.save(any())).thenReturn(userInfo);
+        //when
+        final var newUserInfo = new UserInfo();
+        newUserInfo.setNickname("zxk");
+        newUserInfo.setEmail("zxkfall@foxmail.com");
+        newUserInfo.setPassword("123456");
+        final var result = myUserServiceImpl.createUser(newUserInfo);
+        //then
+        final var matches = bCryptPasswordEncoder.matches("123456", result.getPassword());
+        assertTrue(matches);
     }
 }
