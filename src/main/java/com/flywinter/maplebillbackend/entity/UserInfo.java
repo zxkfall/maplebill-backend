@@ -35,7 +35,7 @@ public class UserInfo {
     @NotNull
     private String email;
 
-    @Length(min = 2,max = 255)
+    @Length(min = 2, max = 255)
     @NotNull
     private String nickname;
 
@@ -44,6 +44,12 @@ public class UserInfo {
 
     private String roles;
 
+
+    public UserInfo(UserInfoDTO userInfoDTO) {
+        this.email = userInfoDTO.getEmail();
+        this.nickname = userInfoDTO.getNickname();
+        this.password = userInfoDTO.getPassword();
+    }
 
     @Override
     public boolean equals(Object o) {
