@@ -26,7 +26,10 @@ public class UserController {
 
     @PostMapping("/register")
     public String register(@Valid @RequestBody UserInfoDTO userInfo) {
-        myUserService.createUser(new UserInfo(userInfo));
-        return userInfo.toString();
+        final var user = myUserService.createUser(new UserInfo(userInfo));
+        if (user != null) {
+            return user.getEmail() + ":Register successfully!";
+        }
+        return "User has registered!";
     }
 }

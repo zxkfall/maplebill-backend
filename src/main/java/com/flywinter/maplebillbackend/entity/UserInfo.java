@@ -33,6 +33,7 @@ public class UserInfo {
 
     @Email
     @NotNull
+    @Column(unique = true)
     private String email;
 
     @Length(min = 2, max = 255)
