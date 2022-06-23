@@ -1,6 +1,7 @@
 package com.flywinter.maplebillbackend.utils;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -45,5 +46,18 @@ class PasswordGeneratorTest {
     void should_generate_password_with_num_lower_or_upper_16() {
         String password = PasswordGenerator.generatePassword(16, false, false);
         assertTrue(password.matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{16}$"));
+    }
+
+
+    @Test
+    void should_generate_password_with_num_lower_upper_special_12_and_encode() {
+        String password = PasswordGenerator.generatePassword(12);
+        assertTrue(password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[\\\\!@#$%^&*()_+-=\\[\\]{};':|,.<>/?~`\"])[a-zA-Z0-9\\\\!@#$%^&*()_+-=\\[\\]{};':|,.<>/?~`\"]{12,}$"));
+        final var bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        final var encode = bCryptPasswordEncoder.encode(password);
+        System.out.println("password: " + password);
+        System.out.println("encode: " + encode);
+//        password: P42F1_6r$2$711
+//        encode: $2a$10$we1KwoVzwkchAMfvRJ2NdurNk3.KzcnDcrEfrD17uT3itfnEaNVdG
     }
 }

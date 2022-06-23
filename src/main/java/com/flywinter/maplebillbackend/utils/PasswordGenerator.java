@@ -26,10 +26,29 @@ public class PasswordGenerator {
     private PasswordGenerator() {
     }
 
+    /**
+     * Generate a random password with the given length.
+     * Format: ^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[\\!@#$%^&*()_+-=\[\]{};':|,.<>/?~`"])[a-zA-Z0-9\\!@#$%^&*()_+-=\[\]{};':|,.<>/?~`"]{4,}$
+     *  at least 4 characters, at least one number, at least one lowercase letter, at least one uppercase letter, at least one special character.
+     *  such as 2K,l  @2pL
+     * @param length the length of the password
+     * @return the generated password
+     */
     public static String generatePassword(int length) {
         return generatePassword(length, true,true);
     }
 
+    /**
+     * Generate a random password with the given length.
+     * Format:
+     *  useSpecial is true ^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[\\!@#$%^&*()_+-=\[\]{};':|,.<>/?~`"])[a-zA-Z0-9\\!@#$%^&*()_+-=\[\]{};':|,.<>/?~`"]{4,}$
+     *   such as 1^Lm
+     *  useSpecial is false ^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{4,}$
+     *   such as 1kMn
+     * @param length the length of the password
+     * @param useSpecialCharacters whether to use special characters
+     * @return the generated password
+     */
     public static String generatePassword(int length, boolean useSpecialCharacters) {
         List<Character> numbers = getSpecifiedTypeLetters(NUMBERS, getRandomLength(length - 3));
         List<Character> lowerLetters = getSpecifiedTypeLetters(LOWER_LETTERS, getRandomLength(length - numbers.size() - 2));
@@ -40,6 +59,24 @@ public class PasswordGenerator {
         return getRandomPassword(passwordList);
     }
 
+    /**
+     * Generate a random password with the given length.
+     * Format:
+     *  useSpecial and isCaseSensitive are true that is generatePassword(int length)
+     *  usCaseSensitive is true that is generatePassword(int length, boolean useSpecialCharacters)
+     *  useCaseSensitive and useSpecialCharacters are false.
+     *      It will be at least 3 characters, at least one number, at least one letter(lowercase letter or uppercase letter).
+     *      ^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{3,}$
+     *      such as 1Km   K2p  KH2
+     *  useCaseSensitive is false and useSpecialCharacters are true.
+     *      It will be at least 3 characters, at least one number, at least one letter(lowercase letter or uppercase letter), at least one special character.
+     *      ^(?=.*[A-Za-z])(?=.*\d)(?=.*[\\!@#$%^&*()_+-=\[\]{};':|,.<>/?~`"])[A-Za-z\d\\!@#$%^&*()_+-=\[\]{};':|,.<>/?~`"]{8,}$
+     *      such as 1L,  3o@
+     * @param length the length of the password
+     * @param useSpecialCharacters whether to use special characters
+     * @param isCaseSensitive whether is case sensitive
+     * @return the generated password
+     */
     public static String generatePassword(int length, boolean useSpecialCharacters, boolean isCaseSensitive) {
         if (isCaseSensitive) {
             return generatePassword(length, useSpecialCharacters);
@@ -52,11 +89,24 @@ public class PasswordGenerator {
         return getRandomPassword(passwordList);
     }
 
+    /**
+     * Generate a random password with the given list.
+     * @param numbers the list of origin password characters
+     * @return the random password
+     */
     private static String getRandomPassword(List<Character> numbers) {
         Collections.shuffle(numbers);
         return numbers.stream().map(Object::toString).collect(Collectors.joining());
     }
 
+    /**
+     * Generate a character list with the special characters or not.
+     * @param useSpecialCharacters whether to use special characters
+     * @param length the length of the password
+     * @param lettersSize the size of the other letters(numbers or English letters)
+     * @param englishLetters the list of English letters(lowercase or uppercase or lowercase and uppercase)
+     * @return password list with special characters or not
+     */
     private static List<Character> hasSpecialLetters(boolean useSpecialCharacters, int length, int lettersSize, List<Character> englishLetters) {
         List<Character> specialLetters;
         List<Character> upperLetters;
@@ -70,6 +120,11 @@ public class PasswordGenerator {
         return getSpecifiedTypeLetters(englishLetters, length - lettersSize);
     }
 
+    /**
+     * Merge lists.
+     * @param lists the lists to merge
+     * @return the merged list
+     */
     @SafeVarargs
     private static List<Character> mergeLists(List<Character>... lists) {
         return Stream.of(lists)
@@ -77,10 +132,21 @@ public class PasswordGenerator {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Get a random length.
+     * @param max the max length
+     * @return the random length
+     */
     private static int getRandomLength(int max) {
         return RANDOM.nextInt(1, max);
     }
 
+    /**
+     * Get specified length random list from the given list.
+     * @param characterList the source list
+     * @param size the size of the random list
+     * @return the random list
+     */
     private static List<Character> getSpecifiedTypeLetters(List<Character> characterList, int size) {
         List<Character> tmpList = new ArrayList<>();
         for (int i = 0; i < size; i++) {
