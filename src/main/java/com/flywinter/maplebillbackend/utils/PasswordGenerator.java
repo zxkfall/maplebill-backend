@@ -26,11 +26,42 @@ public class PasswordGenerator {
     }
 
     public static String generatePassword(int length) {
+        return generatePassword(length, true);
+    }
+
+    public static String generatePassword(int length, boolean useSpecialCharacters, boolean isCaseSensitive) {
+        if (isCaseSensitive) {
+            return generatePassword(length, useSpecialCharacters);
+        }
+        List<Character> numbers = getSpecifiedTypeLetters(NUMBERS, getRandomLength(length - 2));
+        List<Character> letters;
+
+        List<Character> specialLetters = new ArrayList<>();
+        if (useSpecialCharacters) {
+            letters = getSpecifiedTypeLetters(mergeLists(LOWER_LETTERS, UPPER_LETTERS), getRandomLength(length - numbers.size() - 1));
+            final var specialLetterLength = length - numbers.size() - letters.size();
+            specialLetters = getSpecifiedTypeLetters(SPECIAL_CHARACTERS, specialLetterLength);
+        } else {
+            letters = getSpecifiedTypeLetters(mergeLists(LOWER_LETTERS, UPPER_LETTERS), length - numbers.size());
+        }
+        final List<Character> passwordList = mergeLists(numbers, letters, specialLetters);
+        Collections.shuffle(passwordList);
+        return passwordList.stream().map(Object::toString).collect(Collectors.joining());
+    }
+
+    public static String generatePassword(int length, boolean useSpecialCharacters) {
         List<Character> numbers = getSpecifiedTypeLetters(NUMBERS, getRandomLength(length - 3));
         List<Character> lowerLetters = getSpecifiedTypeLetters(LOWER_LETTERS, getRandomLength(length - numbers.size() - 2));
-        List<Character> upperLetters = getSpecifiedTypeLetters(UPPER_LETTERS, getRandomLength(length - numbers.size() - lowerLetters.size() - 1));
-        final var specialLetterLength = length - numbers.size() - lowerLetters.size() - upperLetters.size();
-        List<Character> specialLetters = getSpecifiedTypeLetters(SPECIAL_CHARACTERS, specialLetterLength);
+
+        List<Character> upperLetters;
+        List<Character> specialLetters = new ArrayList<>();
+        if (useSpecialCharacters) {
+            upperLetters = getSpecifiedTypeLetters(UPPER_LETTERS, getRandomLength(length - numbers.size() - lowerLetters.size() - 1));
+            final var specialLetterLength = length - numbers.size() - lowerLetters.size() - upperLetters.size();
+            specialLetters = getSpecifiedTypeLetters(SPECIAL_CHARACTERS, specialLetterLength);
+        } else {
+            upperLetters = getSpecifiedTypeLetters(UPPER_LETTERS, length - numbers.size() - lowerLetters.size());
+        }
 
         final List<Character> passwordList = mergeLists(numbers, lowerLetters, upperLetters, specialLetters);
         Collections.shuffle(passwordList);
@@ -55,6 +86,5 @@ public class PasswordGenerator {
         }
         return tmpList;
     }
-
 
 }
