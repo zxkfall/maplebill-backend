@@ -15,8 +15,7 @@ class PasswordGeneratorTest {
     @Test
     void should_generate_password_with_num_lower_upper_special() {
         String password = PasswordGenerator.generatePassword(8);
-        System.out.println(password);
-        assertTrue(password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+-=\\[\\]{};':|,.<>/?~`])[a-zA-Z0-9!@#$%^&*()_+-=\\[\\]{};':|,.<>/?~`]{8,}$"));
+        assertTrue(password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[\\\\!@#$%^&*()_+-=\\[\\]{};':|,.<>/?~`\"])[a-zA-Z0-9\\\\!@#$%^&*()_+-=\\[\\]{};':|,.<>/?~`\"]{8,}$"));
     }
 
     @Test
@@ -27,20 +26,24 @@ class PasswordGeneratorTest {
     @Test
     void should_generate_password_with_num_lower_upper() {
         String password = PasswordGenerator.generatePassword(8, false);
-        System.out.println(password);
         assertTrue(password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$"));
     }
 
     @Test
     void should_generate_password_with_num_lower_or_upper_special() {
         String password = PasswordGenerator.generatePassword(8, true, false);
-        System.out.println(password);
-        assertTrue(password.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_+-=\\[\\]{};':|,.<>/?~`])[A-Za-z\\d!@#$%^&*()_+-=\\[\\]{};':|,.<>/?~`]{8,}$"));
+        assertTrue(password.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[\\\\!@#$%^&*()_+-=\\[\\]{};':|,.<>/?~`\"])[A-Za-z\\d\\\\!@#$%^&*()_+-=\\[\\]{};':|,.<>/?~`\"]{8,}$"));
     }
+
     @Test
     void should_generate_password_with_num_lower_or_upper() {
         String password = PasswordGenerator.generatePassword(8, false, false);
-        System.out.println(password);
         assertTrue(password.matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$"));
+    }
+
+    @Test
+    void should_generate_password_with_num_lower_or_upper_16() {
+        String password = PasswordGenerator.generatePassword(16, false, false);
+        assertTrue(password.matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{16}$"));
     }
 }
