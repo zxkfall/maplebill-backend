@@ -4,6 +4,8 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by IntelliJ IDEA
@@ -13,63 +15,46 @@ import java.util.List;
  */
 public class PasswordGenerator {
 
-    private PasswordGenerator() {}
+    public static final SecureRandom RANDOM = new SecureRandom();
+
+    protected static final List<Character> NUMBERS = List.of('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
+    protected static final List<Character> LOWER_LETTERS = List.of('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z');
+    protected static final List<Character> UPPER_LETTERS = List.of('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
+    protected static final List<Character> SPECIAL_CHARACTERS = List.of('!', '"', '#', '$', '&', '\'', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~');
+
+    private PasswordGenerator() {
+    }
 
     public static String generatePassword(int length) {
-        List<Character> passwordList = new ArrayList<>();
-        SecureRandom random = new SecureRandom();
-        final var numbers = random.nextInt(1, length - 3);//4
-        final var lowerLetters = random.nextInt(1, length - numbers - 2);//8-2-4=2
-        final var upperLetters = random.nextInt(1, length - numbers - lowerLetters - 1);//8-4-2-1=1
-        final var specialLetters = length - numbers - lowerLetters - upperLetters;//8-4-2-1=1
-        final var numbersList = getNumbers();
-        for (int i = 0; i < numbers; i++) {
-            passwordList.add(numbersList.get(random.nextInt(numbersList.size())));
-        }
-        final var lowerLettersList = getLowerLetters();
-        for (int i = 0; i < lowerLetters; i++) {
-            passwordList.add(lowerLettersList.get(random.nextInt(lowerLettersList.size())));
-        }
-        final var upperLettersList = getUpperLetters();
-        for (int i = 0; i < upperLetters; i++) {
-            passwordList.add(upperLettersList.get(random.nextInt(upperLettersList.size())));
-        }
-        final var specialLettersList = getSpecialLetters();
-        for (int i = 0; i < specialLetters; i++) {
-            passwordList.add(specialLettersList.get(random.nextInt(specialLettersList.size())));
-        }
+        List<Character> numbers = getSpecifiedTypeLetters(NUMBERS, getRandomLength(length - 3));
+        List<Character> lowerLetters = getSpecifiedTypeLetters(LOWER_LETTERS, getRandomLength(length - numbers.size() - 2));
+        List<Character> upperLetters = getSpecifiedTypeLetters(UPPER_LETTERS, getRandomLength(length - numbers.size() - lowerLetters.size() - 1));
+        final var specialLetterLength = length - numbers.size() - lowerLetters.size() - upperLetters.size();
+        List<Character> specialLetters = getSpecifiedTypeLetters(SPECIAL_CHARACTERS, specialLetterLength);
+
+        final List<Character> passwordList = mergeLists(numbers, lowerLetters, upperLetters, specialLetters);
         Collections.shuffle(passwordList);
-        return passwordList.stream().map(String::valueOf).reduce("", (a, b) -> a + b);
+        return passwordList.stream().map(Object::toString).collect(Collectors.joining());
     }
 
-    private static List<Character> getSpecialLetters() {
-        List<Character> specialList = new ArrayList<>();
-        for (int i = 33; i < 127; i++) {
-            if (!getNumbers().contains((char) i) && !getLowerLetters().contains((char) i) && !getLettersByRange(65, 91).contains((char) i)) {
-                specialList.add((char) i);
-            }
+    @SafeVarargs
+    private static List<Character> mergeLists(List<Character>... lists) {
+        return Stream.of(lists)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
+    }
+
+    private static int getRandomLength(int max) {
+        return RANDOM.nextInt(1, max);
+    }
+
+    private static List<Character> getSpecifiedTypeLetters(List<Character> characterList, int size) {
+        List<Character> tmpList = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            tmpList.add(characterList.get(RANDOM.nextInt(characterList.size())));
         }
-        return specialList;
+        return tmpList;
     }
 
 
-    private static List<Character> getUpperLetters() {
-        return getLettersByRange(65, 91);
-    }
-
-    private static List<Character> getLowerLetters() {
-        return getLettersByRange(97, 123);
-    }
-
-    private static List<Character> getNumbers() {
-        return getLettersByRange(48, 58);
-    }
-
-    private static List<Character> getLettersByRange(int start, int end) {
-        List<Character> numList = new ArrayList<>();
-        for (int i = start; i < end; i++) {
-            numList.add((char) i);
-        }
-        return numList;
-    }
 }
