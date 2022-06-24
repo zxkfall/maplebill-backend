@@ -5,20 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.Hibernate;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
@@ -28,11 +20,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @Entity
 @Table(name = "user")
-public class UserInfo {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long id;
+public class UserInfo extends BaseEntity {
 
     @Email
     @NotNull
@@ -48,13 +36,6 @@ public class UserInfo {
 
     private String roles;
 
-    @CreatedDate
-    private LocalDateTime createTime;
-
-    @LastModifiedDate
-    private LocalDateTime updateTime;
-
-
     public UserInfo(UserInfoDTO userInfoDTO) {
         this.email = userInfoDTO.getEmail();
         this.nickname = userInfoDTO.getNickname();
@@ -64,13 +45,14 @@ public class UserInfo {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         UserInfo userInfo = (UserInfo) o;
-        return id != null && Objects.equals(id, userInfo.id);
+        return Objects.equals(email, userInfo.email) && Objects.equals(nickname, userInfo.nickname) && Objects.equals(password, userInfo.password) && Objects.equals(roles, userInfo.roles);
     }
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        return Objects.hash(super.hashCode(), email, nickname, password, roles);
     }
 }
