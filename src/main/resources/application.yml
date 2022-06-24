@@ -14,7 +14,8 @@ spring:
       enabled: true
   flyway:
     # 如果启动的时候需要flyway管理sql脚本的话，将enabled设置为true
-    enabled: true
+#    这里设置为false，是因为要自动创建数据库，并且在jpa创建表后才启用flyway
+    enabled: false
     # 如果数据库不是空表，需要设置成 true，否则启动报错
     baseline-on-migrate: true
     # 验证错误时 是否自动清除数据库 高危操作!

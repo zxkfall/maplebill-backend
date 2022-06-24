@@ -3,10 +3,13 @@ package com.flywinter.maplebillbackend.config;
 import com.flywinter.maplebillbackend.entity.UserInfo;
 import com.flywinter.maplebillbackend.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import javax.sql.DataSource;
 
 /**
  * Created by IntelliJ IDEA
@@ -18,8 +21,14 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class InitDataHookConfig {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    private final DataSource dataSource;
+
+    public InitDataHookConfig(UserRepository userRepository, DataSource dataSource) {
+        this.userRepository = userRepository;
+        this.dataSource = dataSource;
+    }
 
     @Bean
     public ApplicationRunner applicationRunner(){
@@ -35,6 +44,14 @@ public class InitDataHookConfig {
             log.info("初始化用户信息完成");
             log.info("email: 1475795322@qq.com");
             log.info("password: P42F1_6r$2$711");
+
+            //JPA创建表初始化后才启用Flyway
+            //注意配置里面先要将base-line-migrate设置为false
+            Flyway.configure()
+                    .baselineOnMigrate(true)
+                    .dataSource(dataSource)
+                    .load()
+                    .migrate();
         };
     }
 }
