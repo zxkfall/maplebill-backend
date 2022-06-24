@@ -85,7 +85,6 @@ public class MySecurityConfig {
 
                 .cors().and().csrf().disable()
                 .httpBasic()
-                //未登录时，进行json格式的提示，很喜欢这种写法，不用单独写一个又一个的类
                 .authenticationEntryPoint((request, response, authException) -> {
                     response.setContentType("application/json;charset=utf-8");
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -110,12 +109,11 @@ public class MySecurityConfig {
                 .passwordParameter("password")
                 .successHandler((request, response, authentication) -> {
                     final var user = (UserDetails) authentication.getPrincipal();
+                    final var userInfo = myUserService.getUserInfoByEmail(user.getUsername());
                     response.setContentType("application/json;charset=utf-8");
-                    // 写出去
                     HashMap<String, Object> map = new HashMap<>(4);
                     map.put("code", 200);
                     map.put("messsage", "登陆成功");
-                    final var userInfo = myUserService.getUserInfoByEmail(user.getUsername());
                     map.put("token", JWTUtil.getToken(userInfo));
                     ObjectMapper objectMapper = new ObjectMapper();
                     String s = objectMapper.writeValueAsString(map);
@@ -125,7 +123,6 @@ public class MySecurityConfig {
                     writer.close();
                 }).failureHandler((request, response, exception) -> {
                     response.setContentType("application/json;charset=utf-8");
-                    // 写出去
                     HashMap<String, Object> map = new HashMap<>(4);
                     map.put("code", 400);
                     map.put("messsage", "登陆失败");
