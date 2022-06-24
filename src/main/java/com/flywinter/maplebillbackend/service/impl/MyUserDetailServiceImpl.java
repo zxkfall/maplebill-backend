@@ -26,7 +26,7 @@ public class MyUserDetailServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        final var userInfo = myUserService.getPasswordByEmail(username);
+        final var userInfo = myUserService.getUserInfoByEmail(username);
         if (userInfo == null) {
             throw new UsernameNotFoundException("用户不存在");
         }

@@ -10,7 +10,7 @@ import com.flywinter.maplebillbackend.entity.UserInfo;
  */
 public interface MyUserService {
 
-    UserInfo getPasswordByEmail(String email);
+    UserInfo getUserInfoByEmail(String email);
 
     UserInfo createUser(UserInfo userInfo);
 

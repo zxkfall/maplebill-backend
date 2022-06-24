@@ -39,7 +39,7 @@ class MyUserServiceImplTest {
         userInfo.setRoles("ROLE_NORMAL");
         when(userRepository.getUserInfoByEmail("zxkfall@foxmail.com")).thenReturn(userInfo);
         //when
-        final var result = myUserServiceImpl.getPasswordByEmail(userInfo.getEmail());
+        final var result = myUserServiceImpl.getUserInfoByEmail(userInfo.getEmail());
         //then
         assertEquals(userInfo, result);
     }

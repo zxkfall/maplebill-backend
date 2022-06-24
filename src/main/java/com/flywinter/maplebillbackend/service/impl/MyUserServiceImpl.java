@@ -20,7 +20,7 @@ public class MyUserServiceImpl implements MyUserService {
     private UserRepository userRepository;
 
     @Override
-    public UserInfo getPasswordByEmail(String email) {
+    public UserInfo getUserInfoByEmail(String email) {
         return userRepository.getUserInfoByEmail(email);
     }
 
