@@ -1,4 +1,4 @@
-package com.flywinter.maplebillbackend.service;
+package com.flywinter.maplebillbackend.service.impl;
 
 import com.flywinter.maplebillbackend.entity.UserInfo;
 import com.flywinter.maplebillbackend.repository.UserRepository;

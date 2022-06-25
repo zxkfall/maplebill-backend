@@ -1,7 +1,6 @@
 package com.flywinter.maplebillbackend.service.impl;
 
 import com.flywinter.maplebillbackend.service.MyUserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,8 +20,11 @@ import java.util.List;
 @Service
 public class MyUserDetailServiceImpl implements UserDetailsService {
 
-    @Autowired
-    private MyUserService myUserService;
+    private final MyUserService myUserService;
+
+    public MyUserDetailServiceImpl(MyUserService myUserService) {
+        this.myUserService = myUserService;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
