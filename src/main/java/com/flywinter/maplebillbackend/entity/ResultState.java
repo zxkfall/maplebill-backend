@@ -9,8 +9,10 @@ package com.flywinter.maplebillbackend.entity;
 public enum ResultState {
     SUCCESS(200, "success"),
     LOGIN_SUCCESS(200, "login success"),
+    REGISTER_SUCCESS(201, "register success"),
     LOGIN_FAILURE(401, "login failure"),
     NOT_LOGIN(403, "not login"),
+    HAS_REGISTERED(405, "has registered"),
     SERVE_ERROR(500, "serve error"),
     FAILURE(400, "failure");
 

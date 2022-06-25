@@ -2,6 +2,7 @@ package com.flywinter.maplebillbackend.handler;
 
 import com.flywinter.maplebillbackend.entity.ResponseResult;
 import com.flywinter.maplebillbackend.entity.ResultState;
+import com.flywinter.maplebillbackend.exception.RegisterFailedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,6 +28,12 @@ public class GlobalExceptionHandler {
                 .map(fieldError -> fieldError.getField()
                         + ": " + fieldError.getDefaultMessage()).collect(Collectors.joining());
         return ResponseResult.failure(400, collect);
+    }
+
+    @ExceptionHandler(RegisterFailedException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseResult<String> handle(RegisterFailedException e) {
+        return ResponseResult.failure(ResultState.HAS_REGISTERED, e.getMessage());
     }
 
     @ExceptionHandler(Exception.class)

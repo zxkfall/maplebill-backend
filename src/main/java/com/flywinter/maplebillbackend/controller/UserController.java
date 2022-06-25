@@ -1,12 +1,16 @@
 package com.flywinter.maplebillbackend.controller;
 
+import com.flywinter.maplebillbackend.entity.ResponseResult;
+import com.flywinter.maplebillbackend.entity.ResultState;
 import com.flywinter.maplebillbackend.entity.UserInfo;
 import com.flywinter.maplebillbackend.entity.UserInfoDTO;
+import com.flywinter.maplebillbackend.exception.RegisterFailedException;
 import com.flywinter.maplebillbackend.service.MyUserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -21,15 +25,20 @@ import javax.validation.Valid;
 @RestController
 public class UserController {
 
-    @Autowired
-    private MyUserService myUserService;
+    private final MyUserService myUserService;
+
+    public UserController(MyUserService myUserService) {
+        this.myUserService = myUserService;
+    }
 
     @PostMapping("/register")
-    public String register(@Valid @RequestBody UserInfoDTO userInfo) {
-        final var user = myUserService.createUser(new UserInfo(userInfo));
-        if (user != null) {
-            return user.getEmail() + ":Register successfully!";
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseResult<String> register(@Valid @RequestBody UserInfoDTO userInfoDTO) {
+        final var userInfo = new UserInfo(userInfoDTO);
+        final var user = myUserService.createUser(userInfo);
+        if (user == null) {
+            throw new RegisterFailedException("注册失败，用户已存在");
         }
-        return "User has registered!";
+        return ResponseResult.success(ResultState.REGISTER_SUCCESS);
     }
 }

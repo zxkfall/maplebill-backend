@@ -33,6 +33,18 @@ public class ResponseResult<T> {
         return new ResponseResult<>(resultState.getCode(), resultState.getMessage(), data);
     }
 
+    public static <T> ResponseResult<T> success(ResultState resultState) {
+        return new ResponseResult<>(resultState.getCode(), resultState.getMessage(), null);
+    }
+
+    public static <T> ResponseResult<T> success(int code, String message, T data) {
+        return new ResponseResult<>(code, message, data);
+    }
+
+    public static <T> ResponseResult<T> success(int code, String message) {
+        return new ResponseResult<>(code, message, null);
+    }
+
     public static <T> ResponseResult<T> failure() {
         return new ResponseResult<>(ResultState.FAILURE.getCode(), ResultState.FAILURE.getMessage(), null);
     }
