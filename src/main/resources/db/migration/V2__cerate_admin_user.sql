@@ -1,6 +1,6 @@
 # password: P42F1_6r$2$711
 # encode: $2a$10$we1KwoVzwkchAMfvRJ2NdurNk3.KzcnDcrEfrD17uT3itfnEaNVdG
-INSERT INTO maple_bill.`user`
+INSERT INTO `user`
 (`email`,
  `nickname`,
  `password`,

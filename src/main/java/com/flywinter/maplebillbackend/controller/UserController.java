@@ -31,7 +31,7 @@ public class UserController {
         this.myUserService = myUserService;
     }
 
-    @PostMapping("/register")
+    @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseResult<String> register(@Valid @RequestBody UserInfoDTO userInfoDTO) {
         final var userInfo = new UserInfo(userInfoDTO);

@@ -72,7 +72,7 @@ class UserControllerTest {
         //注意equals方法
         when(myUserService.createUser(argThat(argument -> argument.equals(userInfo)))).thenReturn(userInfo);
         //when
-        final var result = mockMvc.perform(MockMvcRequestBuilders.post("/register")
+        final var result = mockMvc.perform(MockMvcRequestBuilders.post("/signup")
                         .content(userInfoDTOJacksonTester.write(userInfoDTO).getJson())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isCreated())

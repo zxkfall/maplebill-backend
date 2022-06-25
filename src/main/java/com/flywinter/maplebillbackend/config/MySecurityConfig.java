@@ -51,7 +51,7 @@ public class MySecurityConfig {
                 .authenticationEntryPoint(myAuthenticationEntryPoint)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/login", "/register",
+                .antMatchers("/login", "/signup",
                         "/swagger-ui.html", "/swagger-ui/**",
                         "/v2/api-docs", "/v2/api-docs/**",
                         "/swagger-resources/**", "/webjars/**"
