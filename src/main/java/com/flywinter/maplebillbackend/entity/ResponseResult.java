@@ -41,6 +41,10 @@ public class ResponseResult<T> {
         return new ResponseResult<>(resultState.getCode(), resultState.getMessage(), null);
     }
 
+    public static <T> ResponseResult<T> failure(int code, String message) {
+        return new ResponseResult<>(code, message, null);
+    }
+
     public static <T> ResponseResult<T> failure(ResultState resultState, T data) {
         return new ResponseResult<>(resultState.getCode(), resultState.getMessage(), data);
     }

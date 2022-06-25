@@ -11,6 +11,7 @@ public enum ResultState {
     LOGIN_SUCCESS(200, "login success"),
     LOGIN_FAILURE(401, "login failure"),
     NOT_LOGIN(403, "not login"),
+    SERVE_ERROR(500, "serve error"),
     FAILURE(400, "failure");
 
     private final int code;
