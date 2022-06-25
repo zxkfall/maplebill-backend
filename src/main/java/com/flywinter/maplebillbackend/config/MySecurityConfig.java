@@ -51,9 +51,13 @@ public class MySecurityConfig {
                 .authenticationEntryPoint(myAuthenticationEntryPoint)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/login", "/register")
+                .antMatchers("/login", "/register",
+                        "/swagger-ui.html", "/swagger-ui/**",
+                        "/v2/api-docs", "/v2/api-docs/**",
+                        "/swagger-resources/**", "/webjars/**"
+                )
                 .permitAll()
-                .antMatchers("/*")
+                .antMatchers("/**")
                 .authenticated()
                 .and()
                 .authenticationManager(authenticationManager)

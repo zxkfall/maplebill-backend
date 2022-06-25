@@ -20,5 +20,12 @@ spring:
     baseline-on-migrate: true
     # 验证错误时 是否自动清除数据库 高危操作!
     clean-on-validation-error: false
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher # for swagger2 https://stackoverflow.com/questions/70036953/springboot-2-6-0-spring-fox-3-failed-to-start-bean-documentationpluginsboot
 user-define:
   token-name: Custom-Maple-Token
+server:
+  servlet:
+    context-path: /
+#/swagger-ui/
