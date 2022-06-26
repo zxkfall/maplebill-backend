@@ -9,7 +9,6 @@ import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.test.annotation.DirtiesContext;
-
 import javax.sql.DataSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
