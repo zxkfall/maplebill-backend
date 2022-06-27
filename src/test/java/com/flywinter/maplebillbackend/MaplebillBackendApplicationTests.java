@@ -14,11 +14,7 @@ import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -48,20 +44,6 @@ class MaplebillBackendApplicationTests {
     private JacksonTester<ResponseResult<String>> stringJsonbTester;
 
     private String myToken;
-
-//    @BeforeEach
-//    void should_login() throws IOException {
-//        MultiValueMap<String, String> params= new LinkedMultiValueMap<>();
-//        params.add("email", "1475795322@qq.com");
-//        params.add("password", "P42F1_6r$2$711");
-//        final var httpHeaders = new HttpHeaders();
-//        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-//        final var billDTOHttpEntity = new HttpEntity<>(params, httpHeaders);
-//        final var result = testRestTemplate.postForEntity("/login", billDTOHttpEntity, String.class);
-//        final var responseJson = result.getBody();
-//        final var responseResult = stringJsonbTester.parseObject(responseJson);
-//        myToken = responseResult.getData();
-//    }
 
     @BeforeEach
     void should_login() throws IOException {
