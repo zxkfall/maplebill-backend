@@ -5,6 +5,7 @@ import com.flywinter.maplebillbackend.entity.ResponseResult;
 import com.flywinter.maplebillbackend.entity.UserInfoDTO;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
@@ -13,12 +14,18 @@ import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -36,6 +43,37 @@ class MaplebillBackendApplicationTests {
 
     @Autowired
     private JacksonTester<ResponseResult<BillDTO>> billJsonbTester;
+
+    @Autowired
+    private JacksonTester<ResponseResult<String>> stringJsonbTester;
+
+    private String myToken;
+
+//    @BeforeEach
+//    void should_login() throws IOException {
+//        MultiValueMap<String, String> params= new LinkedMultiValueMap<>();
+//        params.add("email", "1475795322@qq.com");
+//        params.add("password", "P42F1_6r$2$711");
+//        final var httpHeaders = new HttpHeaders();
+//        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+//        final var billDTOHttpEntity = new HttpEntity<>(params, httpHeaders);
+//        final var result = testRestTemplate.postForEntity("/login", billDTOHttpEntity, String.class);
+//        final var responseJson = result.getBody();
+//        final var responseResult = stringJsonbTester.parseObject(responseJson);
+//        myToken = responseResult.getData();
+//    }
+
+    @BeforeEach
+    void should_login() throws IOException {
+        Map<String, String> map = new HashMap<>();
+        map.put("email", "1475795322@qq.com");
+        map.put("password", "P42F1_6r$2$711");
+        final var result = testRestTemplate.postForEntity("/login", map, String.class);
+        final var responseJson = result.getBody();
+        final var responseResult = stringJsonbTester.parseObject(responseJson);
+        myToken = responseResult.getData();
+    }
+
 
     @Test
     void registerApi() {
@@ -62,7 +100,7 @@ class MaplebillBackendApplicationTests {
         billDTO.setType(0);
         //when
         final var httpHeaders = new HttpHeaders();
-        httpHeaders.add("Custom-Maple-Token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuaWNrbmFtZSI6Inp4a2ZhbGwiLCJleHAiOjE2NTY4NTA5ODcsImVtYWlsIjoiMTQ3NTc5NTMyMkBxcS5jb20ifQ.D-LGV6Qit5kFXkhf4yuRRq7vzGkxBlbOZk5dnm9XGiE");
+        httpHeaders.add("Custom-Maple-Token", myToken);
         final var billDTOHttpEntity = new HttpEntity<>(billDTO, httpHeaders);
         final var result = testRestTemplate.postForEntity("/bill", billDTOHttpEntity, String.class);
         //then

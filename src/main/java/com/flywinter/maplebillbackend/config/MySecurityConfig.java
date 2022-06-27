@@ -1,6 +1,7 @@
 package com.flywinter.maplebillbackend.config;
 
 import com.flywinter.maplebillbackend.filter.MyOncePerRequestFilter;
+import com.flywinter.maplebillbackend.filter.MyAuthenticationProcessingFilter;
 import com.flywinter.maplebillbackend.handler.MyAuthenticationEntryPoint;
 import com.flywinter.maplebillbackend.handler.MyAuthenticationFailureHandler;
 import com.flywinter.maplebillbackend.handler.MyAuthenticationSuccessHandler;
@@ -39,12 +40,23 @@ public class MySecurityConfig {
     }
 
     @Bean
+    public MyAuthenticationProcessingFilter myAuthenticationProcessingFilter(HttpSecurity httpSecurity,
+                                                                             MyAuthenticationFailureHandler myAuthenticationFailureHandler,
+                                                                             MyAuthenticationSuccessHandler myAuthenticationSuccessHandler) throws Exception {
+        final var authenticationManager = getAuthenticationManager(httpSecurity);
+        final var filter = new MyAuthenticationProcessingFilter();
+        filter.setUsernameParameter("email");
+        filter.setPasswordParameter("password");
+        filter.setAuthenticationManager(authenticationManager);
+        filter.setAuthenticationSuccessHandler(myAuthenticationSuccessHandler);
+        filter.setAuthenticationFailureHandler(myAuthenticationFailureHandler);
+        return filter;
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity,
                                                    MyOncePerRequestFilter myOncePerRequestFilter,
-                                                   MyAuthenticationFailureHandler myAuthenticationFailureHandler,
-                                                   MyAuthenticationSuccessHandler myAuthenticationSuccessHandler,
                                                    MyAuthenticationEntryPoint myAuthenticationEntryPoint) throws Exception {
-        final AuthenticationManager authenticationManager = getAuthenticationManager(httpSecurity);
         httpSecurity.addFilterBefore(myOncePerRequestFilter, UsernamePasswordAuthenticationFilter.class)
                 .cors().and().csrf().disable()
                 .httpBasic()
@@ -59,14 +71,6 @@ public class MySecurityConfig {
                 .permitAll()
                 .antMatchers("/**")
                 .authenticated()
-                .and()
-                .authenticationManager(authenticationManager)
-                .formLogin()
-                .loginProcessingUrl("/login")
-                .usernameParameter("email")
-                .passwordParameter("password")
-                .successHandler(myAuthenticationSuccessHandler)
-                .failureHandler(myAuthenticationFailureHandler)
                 .and()
                 .sessionManagement().disable();
         return httpSecurity.build();

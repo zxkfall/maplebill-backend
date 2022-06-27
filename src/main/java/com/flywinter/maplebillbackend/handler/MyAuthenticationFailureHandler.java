@@ -22,7 +22,8 @@ public class MyAuthenticationFailureHandler implements AuthenticationFailureHand
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
-        final var responseResult = ResponseResult.failure(ResultState.LOGIN_FAILURE);
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        final var responseResult = ResponseResult.failure(ResultState.LOGIN_FAILURE, (Object) exception.toString());
         ResponseUtil.writeResponseResult(response, responseResult);
     }
 }
