@@ -1,10 +1,9 @@
 package com.flywinter.maplebillbackend.controller;
 
-import com.flywinter.maplebillbackend.entity.Bill;
 import com.flywinter.maplebillbackend.entity.BillDTO;
 import com.flywinter.maplebillbackend.entity.ResponseResult;
-import com.flywinter.maplebillbackend.repository.BillRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.flywinter.maplebillbackend.service.BillService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,18 +22,15 @@ import javax.validation.Valid;
  */
 @RestController
 @RequestMapping("/bill")
+@AllArgsConstructor
 public class BillController {
 
-    @Autowired
-    private BillRepository billRepository;
+    private BillService billService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseResult<BillDTO> addBill(@Valid @RequestBody BillDTO billDTO, Authentication authentication) {
-        final var email = authentication.getName();
-        billDTO.setEmail(email);
-        final var bill = new Bill(billDTO);
-        final var result = billRepository.save(bill);
-        return ResponseResult.success(result.getBillDTO());
+        return billService.addBillByDTO(billDTO, authentication);
     }
+
 }
