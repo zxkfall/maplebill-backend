@@ -78,4 +78,21 @@ class BillServiceImplTest {
         verify(billRepository, times(1)).deleteById(1L);
     }
 
+    @Test
+    void editBill() {
+        final var billDTO = new BillDTO();
+        billDTO.setEmail("1475795322@qq.com");
+        billDTO.setAmount(new BigDecimal(100));
+        billDTO.setCategory(1);
+        billDTO.setDateTime(LocalDateTime.now());
+        billDTO.setDescription("food");
+        billDTO.setType(0);
+        final var bill = new Bill(billDTO);
+        bill.setId(1L);
+        when(billRepository.save(bill)).thenReturn(bill);
+        when(billRepository.findById(1L)).thenReturn(Optional.of(bill));
+        when(authentication.getName()).thenReturn("1475795322@qq.com");
+        final var result = billServiceImpl.editBillById(1L, billDTO, authentication);
+        assertEquals(billDTO, result.getData());
+    }
 }

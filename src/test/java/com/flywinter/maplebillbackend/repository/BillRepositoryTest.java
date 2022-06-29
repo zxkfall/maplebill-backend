@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Created by IntelliJ IDEA
@@ -76,5 +77,20 @@ class BillRepositoryTest {
         billRepository.deleteById(id);
         final var result = billRepository.findById(id);
         assertFalse(result.isPresent());
+    }
+
+    @Test
+    void should_change_a_bill() {
+        final var persist = testEntityManager.persist(myDefineBill);
+        final var id = persist.getId();
+        final var bill = billRepository.findById(id);
+        if (bill.isPresent()) {
+            bill.get().setAmount(new BigDecimal(200));
+            billRepository.save(bill.get());
+        }
+        final var result = billRepository.findById(id);
+        assertTrue(result.isPresent());
+        assertEquals(persist.getBillDTO(), result.get().getBillDTO());
+
     }
 }
