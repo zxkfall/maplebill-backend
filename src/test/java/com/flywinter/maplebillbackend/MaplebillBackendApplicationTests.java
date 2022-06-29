@@ -16,7 +16,6 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -30,7 +29,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)//随机端口
 @AutoConfigureJsonTesters//序列化
@@ -49,9 +47,6 @@ class MaplebillBackendApplicationTests {
 
     @Autowired
     private JacksonTester<ResponseResult<String>> stringJsonbTester;
-
-    @Autowired
-    private JacksonTester<ResponseResult<Object>> objectJacksonTester;
 
     @LocalServerPort
     private int port;
