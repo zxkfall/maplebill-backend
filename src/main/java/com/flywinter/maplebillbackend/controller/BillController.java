@@ -6,6 +6,8 @@ import com.flywinter.maplebillbackend.service.BillService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +33,13 @@ public class BillController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseResult<BillDTO> addBill(@Valid @RequestBody BillDTO billDTO, Authentication authentication) {
         return billService.addBillByDTO(billDTO, authentication);
+    }
+
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseResult<BillDTO> getBill(@PathVariable(value = "id") Long id,
+                                           Authentication authentication) {
+        return billService.getBillById(id, authentication);
     }
 
 }

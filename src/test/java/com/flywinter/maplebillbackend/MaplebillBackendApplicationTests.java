@@ -12,9 +12,14 @@ import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -42,6 +47,9 @@ class MaplebillBackendApplicationTests {
 
     @Autowired
     private JacksonTester<ResponseResult<String>> stringJsonbTester;
+
+    @LocalServerPort
+    private int port;
 
     private String myToken;
 
@@ -73,13 +81,7 @@ class MaplebillBackendApplicationTests {
     @Test
     void should_add_a_bill_record() throws IOException {
         //given
-        final var billDTO = new BillDTO();
-        billDTO.setEmail("1475795322@qq.com");
-        billDTO.setAmount(new BigDecimal(100));
-        billDTO.setCategory(1);
-        billDTO.setDateTime(LocalDateTime.now());
-        billDTO.setDescription("饭饭饭");
-        billDTO.setType(0);
+        final BillDTO billDTO = createBillDTO();
         //when
         final var httpHeaders = new HttpHeaders();
         httpHeaders.add("Custom-Maple-Token", myToken);
@@ -89,6 +91,45 @@ class MaplebillBackendApplicationTests {
         final var responseEntity = billJsonbTester.parseObject(result.getBody());
         assertEquals(201, result.getStatusCodeValue());
         assertEquals(billDTO, responseEntity.getData());
+    }
+
+    @Test
+    void should_get_a_bill_record() throws IOException {
+        addBill();
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+        headers.add("Custom-Maple-Token", myToken);
+        final var result = testRestTemplate.exchange("http://localhost:" + port + "/bill/1", HttpMethod.GET, new HttpEntity<>(headers),
+                String.class);
+        final var responseResult = billJsonbTester.parseObject(result.getBody());
+        final var resultBillDTO = responseResult.getData();
+        assertEquals(200, result.getStatusCodeValue());
+        final var billDTO = createBillDTO();
+        assertEquals(0, billDTO.getAmount().compareTo(resultBillDTO.getAmount()));
+        assertEquals(billDTO.getCategory(), resultBillDTO.getCategory());
+        assertEquals(billDTO.getDateTime(), resultBillDTO.getDateTime());
+        assertEquals(billDTO.getDescription(), resultBillDTO.getDescription());
+        assertEquals(billDTO.getType(), resultBillDTO.getType());
+    }
+
+    private void addBill() {
+        final BillDTO billDTO = createBillDTO();
+        //when
+        final var httpHeaders = new HttpHeaders();
+        httpHeaders.add("Custom-Maple-Token", myToken);
+        final var billDTOHttpEntity = new HttpEntity<>(billDTO, httpHeaders);
+        testRestTemplate.postForEntity("/bill", billDTOHttpEntity, String.class);
+    }
+
+    private BillDTO createBillDTO() {
+        final var billDTO = new BillDTO();
+        billDTO.setEmail("1475795322@qq.com");
+        billDTO.setAmount(new BigDecimal(100));
+        billDTO.setCategory(1);
+        billDTO.setDateTime(LocalDateTime.now());
+        billDTO.setDescription("饭饭饭");
+        billDTO.setType(0);
+        return billDTO;
     }
 
     @AfterEach

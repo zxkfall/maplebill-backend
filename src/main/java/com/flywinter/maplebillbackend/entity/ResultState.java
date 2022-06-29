@@ -14,6 +14,7 @@ public enum ResultState {
     NOT_LOGIN(403, "not login"),
     HAS_REGISTERED(405, "has registered"),
     SERVE_ERROR(500, "serve error"),
+    BAD_REQUEST(400, "bad request"),
     FAILURE(400, "failure");
 
     private final int code;

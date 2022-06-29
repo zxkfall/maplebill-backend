@@ -14,4 +14,5 @@ public interface BillService {
 
     ResponseResult<BillDTO> addBillByDTO(BillDTO billDTO, Authentication authentication);
 
+    ResponseResult<BillDTO> getBillById(Long id, Authentication authentication);
 }

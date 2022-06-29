@@ -24,4 +24,18 @@ public class BillServiceImpl implements BillService {
         final var result = billRepository.save(bill);
         return ResponseResult.success(result.getBillDTO());
     }
+
+    @Override
+    public ResponseResult<BillDTO> getBillById(Long id, Authentication authentication) {
+        final var bill = billRepository.findById(id);
+        if (bill.isEmpty()) {
+            throw new IllegalArgumentException("Bill not found");
+        }
+        final var billDTO = bill.get().getBillDTO();
+        final var isSameUser = billDTO.getEmail().equals(authentication.getName());
+        if (!isSameUser) {
+            throw new IllegalArgumentException("You can't get other's bill");
+        }
+        return ResponseResult.success(billDTO);
+    }
 }

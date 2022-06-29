@@ -36,6 +36,13 @@ public class GlobalExceptionHandler {
         return ResponseResult.failure(ResultState.HAS_REGISTERED, e.getMessage());
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseResult<String> handle(IllegalArgumentException e) {
+        return ResponseResult.failure(ResultState.BAD_REQUEST, e.getMessage());
+    }
+
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseResult<String> handle(Exception e) {

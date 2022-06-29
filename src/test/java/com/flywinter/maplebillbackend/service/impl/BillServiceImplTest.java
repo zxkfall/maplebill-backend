@@ -51,4 +51,5 @@ class BillServiceImplTest {
         final var result = billServiceImpl.addBillByDTO(billDTO, authentication);
         assertEquals(billDTO, result.getData());
     }
+
 }
