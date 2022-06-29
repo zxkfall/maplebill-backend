@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)//随机端口
 @AutoConfigureJsonTesters//序列化
@@ -47,6 +48,9 @@ class MaplebillBackendApplicationTests {
 
     @Autowired
     private JacksonTester<ResponseResult<String>> stringJsonbTester;
+
+    @Autowired
+    private JacksonTester<ResponseResult<Object>> objectJacksonTester;
 
     @LocalServerPort
     private int port;
@@ -110,6 +114,17 @@ class MaplebillBackendApplicationTests {
         assertEquals(billDTO.getDateTime(), resultBillDTO.getDateTime());
         assertEquals(billDTO.getDescription(), resultBillDTO.getDescription());
         assertEquals(billDTO.getType(), resultBillDTO.getType());
+    }
+
+    @Test
+    void should_delete_a_bill_record() {
+        addBill();
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+        headers.add("Custom-Maple-Token", myToken);
+        final var result = testRestTemplate.exchange("http://localhost:" + port + "/bill/1", HttpMethod.DELETE, new HttpEntity<>(headers),
+                String.class);
+        assertEquals(204, result.getStatusCodeValue());
     }
 
     private void addBill() {

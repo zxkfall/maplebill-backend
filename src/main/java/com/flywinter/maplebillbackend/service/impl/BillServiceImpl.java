@@ -38,4 +38,13 @@ public class BillServiceImpl implements BillService {
         }
         return ResponseResult.success(billDTO);
     }
+
+    @Override
+    public void removeBillById(Long id, Authentication authentication) {
+        final var queryResult = billRepository.findById(id);
+        if (queryResult.isEmpty()) {
+            throw new IllegalArgumentException("Bill not found");
+        }
+        billRepository.deleteById(id);
+    }
 }

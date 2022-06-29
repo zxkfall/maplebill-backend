@@ -6,6 +6,7 @@ import com.flywinter.maplebillbackend.service.BillService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,6 +41,13 @@ public class BillController {
     public ResponseResult<BillDTO> getBill(@PathVariable(value = "id") Long id,
                                            Authentication authentication) {
         return billService.getBillById(id, authentication);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeBill(@PathVariable(value = "id") Long id,
+                                           Authentication authentication) {
+        billService.removeBillById(id, authentication);
     }
 
 }
