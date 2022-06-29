@@ -24,6 +24,7 @@ import org.springframework.util.MultiValueMap;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -99,7 +100,7 @@ class MaplebillBackendApplicationTests {
 
     @Test
     void should_get_a_bill_record() throws IOException {
-        addBill();
+        final var billDTO = addBill();
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("Content-Type", "application/json");
         headers.add("Custom-Maple-Token", myToken);
@@ -108,10 +109,9 @@ class MaplebillBackendApplicationTests {
         final var responseResult = billJsonbTester.parseObject(result.getBody());
         final var resultBillDTO = responseResult.getData();
         assertEquals(200, result.getStatusCodeValue());
-        final var billDTO = createBillDTO();
-        assertEquals(0, billDTO.getAmount().compareTo(resultBillDTO.getAmount()));
+        assertEquals(0, billDTO.getAmount().setScale(2, RoundingMode.HALF_UP).compareTo(resultBillDTO.getAmount().setScale(2, RoundingMode.HALF_UP)));
         assertEquals(billDTO.getCategory(), resultBillDTO.getCategory());
-        assertEquals(billDTO.getDateTime(), resultBillDTO.getDateTime());
+        assertEquals(0, billDTO.getDateTime().withNano(10).compareTo(resultBillDTO.getDateTime().withNano(10)));
         assertEquals(billDTO.getDescription(), resultBillDTO.getDescription());
         assertEquals(billDTO.getType(), resultBillDTO.getType());
     }
@@ -127,13 +127,14 @@ class MaplebillBackendApplicationTests {
         assertEquals(204, result.getStatusCodeValue());
     }
 
-    private void addBill() {
+    private BillDTO addBill() {
         final BillDTO billDTO = createBillDTO();
         //when
         final var httpHeaders = new HttpHeaders();
         httpHeaders.add("Custom-Maple-Token", myToken);
         final var billDTOHttpEntity = new HttpEntity<>(billDTO, httpHeaders);
         testRestTemplate.postForEntity("/bill", billDTOHttpEntity, String.class);
+        return billDTO;
     }
 
     private BillDTO createBillDTO() {

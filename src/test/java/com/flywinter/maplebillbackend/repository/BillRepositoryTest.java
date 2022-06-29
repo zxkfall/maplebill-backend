@@ -13,10 +13,10 @@ import org.springframework.test.annotation.Rollback;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Created by IntelliJ IDEA
@@ -51,12 +51,6 @@ class BillRepositoryTest {
 
     @Test
     void save_bill() {
-        myDefineBill.setEmail("1475795322@qq.com");
-        myDefineBill.setAmount(new BigDecimal(100));
-        myDefineBill.setCategory(1);
-        myDefineBill.setDateTime(LocalDateTime.now());
-        myDefineBill.setDescription("food");
-        myDefineBill.setType(0);
         testEntityManager.persist(myDefineBill);
         final var result = billRepository.findAll();
         assertEquals(1, result.size());
@@ -65,18 +59,22 @@ class BillRepositoryTest {
 
     @Test
     void should_get_bill_by_id() {
-        myDefineBill.setEmail("1475795322@qq.com");
-        myDefineBill.setAmount(new BigDecimal(100));
-        myDefineBill.setCategory(1);
-        myDefineBill.setDateTime(LocalDateTime.now());
-        myDefineBill.setDescription("food");
-        myDefineBill.setType(0);
-        testEntityManager.persist(myDefineBill);
-        final var result = billRepository.findById(1L);
+        final var persist = testEntityManager.persist(myDefineBill);
+        final var id = persist.getId();
+        final var result = billRepository.findById(id);
         BillDTO billDTO = new BillDTO();
         if (result.isPresent()) {
             billDTO = result.get().getBillDTO();
         }
         assertEquals(myDefineBill.getBillDTO(), billDTO);
+    }
+
+    @Test
+    void should_delete_a_bill() {
+        final var persist = testEntityManager.persist(myDefineBill);
+        final var id = persist.getId();
+        billRepository.deleteById(id);
+        final var result = billRepository.findById(id);
+        assertFalse(result.isPresent());
     }
 }
