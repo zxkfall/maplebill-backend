@@ -83,4 +83,33 @@ class BillControllerTest {
         final var billDTOResponseResult = responseJacksonTester.parse(contentAsString).getObject();
         assertEquals(billDTO, billDTOResponseResult.getData());
     }
+
+    @Test
+    void should_get_a_bill() throws Exception {
+        final var billDTO = new BillDTO();
+        billDTO.setEmail("1475795322@qq.com");
+        billDTO.setAmount(new BigDecimal(100));
+        billDTO.setCategory(1);
+        billDTO.setDateTime(LocalDateTime.now());
+        billDTO.setDescription("food");
+        billDTO.setType(0);
+        when(billService.getBillById(eq(1L), any())).thenReturn(ResponseResult.success(billDTO));
+        final var result = mockMvc.perform(MockMvcRequestBuilders.get("/bill/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+                        .content(billDTOJacksonTester.write(billDTO).getJson()))
+                .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+        final var contentAsString = result.getResponse().getContentAsString();
+        final var billDTOResponseResult = responseJacksonTester.parse(contentAsString).getObject();
+        assertEquals(billDTO, billDTOResponseResult.getData());
+    }
+
+    @Test
+    void should_delete_a_bill() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/bill/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+                        .content(billDTOJacksonTester.write(new BillDTO()).getJson()))
+                .andExpect(MockMvcResultMatchers.status().isNoContent()).andReturn();
+    }
 }

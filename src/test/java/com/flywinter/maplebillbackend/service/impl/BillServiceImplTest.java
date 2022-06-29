@@ -17,6 +17,8 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -68,4 +70,12 @@ class BillServiceImplTest {
         final var result = billServiceImpl.getBillById(1L, authentication);
         assertEquals(billDTO, result.getData());
     }
+
+    @Test
+    void deleteBill() {
+        when(billRepository.findById(1L)).thenReturn(Optional.of(new Bill()));
+        billServiceImpl.removeBillById(1L, authentication);
+        verify(billRepository, times(1)).deleteById(1L);
+    }
+
 }
