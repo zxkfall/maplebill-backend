@@ -17,4 +17,6 @@ public interface BillService {
     ResponseResult<BillDTO> getBillById(Long id, Authentication authentication);
 
     void removeBillById(Long id, Authentication authentication);
+
+    ResponseResult<BillDTO> editBillById(Long id, BillDTO billDTO, Authentication authentication);
 }

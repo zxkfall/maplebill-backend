@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class BillServiceImpl implements BillService {
 
+    public static final String BILL_NOT_FOUND = "Bill not found";
     public final BillRepository billRepository;
 
     public BillServiceImpl(BillRepository billRepository) {
@@ -29,7 +30,7 @@ public class BillServiceImpl implements BillService {
     public ResponseResult<BillDTO> getBillById(Long id, Authentication authentication) {
         final var bill = billRepository.findById(id);
         if (bill.isEmpty()) {
-            throw new IllegalArgumentException("Bill not found");
+            throw new IllegalArgumentException(BILL_NOT_FOUND);
         }
         final var billDTO = bill.get().getBillDTO();
         final var isSameUser = billDTO.getEmail().equals(authentication.getName());
@@ -43,8 +44,24 @@ public class BillServiceImpl implements BillService {
     public void removeBillById(Long id, Authentication authentication) {
         final var queryResult = billRepository.findById(id);
         if (queryResult.isEmpty()) {
-            throw new IllegalArgumentException("Bill not found");
+            throw new IllegalArgumentException(BILL_NOT_FOUND);
         }
         billRepository.deleteById(id);
+    }
+
+    @Override
+    public ResponseResult<BillDTO> editBillById(Long id, BillDTO billDTO, Authentication authentication) {
+        final var queryResult = billRepository.findById(id);
+        if (queryResult.isPresent()) {
+            final var bill = queryResult.get();
+            final var isSameUser = bill.getEmail().equals(authentication.getName());
+            if (!isSameUser) {
+                throw new IllegalArgumentException("You can't edit other's bill");
+            }
+            bill.setBillDTO(billDTO);
+            final var result = billRepository.save(bill);
+            return ResponseResult.success(result.getBillDTO());
+        }
+        throw new IllegalArgumentException(BILL_NOT_FOUND);
     }
 }

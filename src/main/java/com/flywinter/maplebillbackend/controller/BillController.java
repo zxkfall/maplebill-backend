@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -46,8 +47,15 @@ public class BillController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removeBill(@PathVariable(value = "id") Long id,
-                                           Authentication authentication) {
+                           Authentication authentication) {
         billService.removeBillById(id, authentication);
     }
 
+    @PutMapping({"/{id}"})
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseResult<BillDTO> editBill(@PathVariable("id") Long id,
+                                            @Valid @RequestBody BillDTO billDTO,
+                                            Authentication authentication) {
+        return billService.editBillById(id, billDTO, authentication);
+    }
 }

@@ -122,6 +122,29 @@ class MaplebillBackendApplicationTests {
         assertEquals(204, result.getStatusCodeValue());
     }
 
+    @Test
+    void should_update_bill_info() throws IOException {
+        final var billDTO = addBill();
+        billDTO.setAmount(new BigDecimal(100));
+        billDTO.setCategory(1);
+        billDTO.setDateTime(LocalDateTime.now());
+        billDTO.setDescription("更新测试");
+        billDTO.setType(1);
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+        headers.add("Custom-Maple-Token", myToken);
+        final var result = testRestTemplate.exchange("http://localhost:" + port + "/bill/1", HttpMethod.PUT, new HttpEntity<>(billDTO, headers),
+                String.class);
+        final var responseResult = billJsonbTester.parseObject(result.getBody());
+        final var resultBillDTO = responseResult.getData();
+        assertEquals(200, result.getStatusCodeValue());
+        assertEquals(0, billDTO.getAmount().setScale(2, RoundingMode.HALF_UP).compareTo(resultBillDTO.getAmount().setScale(2, RoundingMode.HALF_UP)));
+        assertEquals(billDTO.getCategory(), resultBillDTO.getCategory());
+        assertEquals(0, billDTO.getDateTime().withNano(10).compareTo(resultBillDTO.getDateTime().withNano(10)));
+        assertEquals(billDTO.getDescription(), resultBillDTO.getDescription());
+        assertEquals(billDTO.getType(), resultBillDTO.getType());
+    }
+
     private BillDTO addBill() {
         final BillDTO billDTO = createBillDTO();
         //when

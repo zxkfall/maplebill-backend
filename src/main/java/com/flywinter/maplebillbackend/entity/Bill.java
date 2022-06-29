@@ -69,4 +69,13 @@ public class Bill extends BaseEntity {
     public int hashCode() {
         return getClass().hashCode();
     }
+
+    public void setBillDTO(BillDTO billDTO) {
+        this.email = billDTO.getEmail();
+        this.amount = billDTO.getAmount();
+        this.description = billDTO.getDescription();
+        this.category = billDTO.getCategory();
+        this.type = billDTO.getType();
+        this.dateTime = billDTO.getDateTime();
+    }
 }
