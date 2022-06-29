@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -52,4 +53,19 @@ class BillServiceImplTest {
         assertEquals(billDTO, result.getData());
     }
 
+    @Test
+    void getBill() {
+        final var billDTO = new BillDTO();
+        billDTO.setEmail("1475795322@qq.com");
+        billDTO.setAmount(new BigDecimal(100));
+        billDTO.setCategory(1);
+        billDTO.setDateTime(LocalDateTime.now());
+        billDTO.setDescription("food");
+        billDTO.setType(0);
+        final var bill = new Bill(billDTO);
+        when(billRepository.findById(1L)).thenReturn(Optional.of(bill));
+        when(authentication.getName()).thenReturn("1475795322@qq.com");
+        final var result = billServiceImpl.getBillById(1L, authentication);
+        assertEquals(billDTO, result.getData());
+    }
 }
